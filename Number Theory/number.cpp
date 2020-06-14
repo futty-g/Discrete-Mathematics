@@ -1,4 +1,3 @@
-//#include"number.h"
 #include<iostream>
 #include<utility>
 #include<cmath>
@@ -66,7 +65,7 @@ pair<long long, long long> sfe(long long p, long long q, long long n){
 
 int main(){
 
-    pair<long long, long long> p = sfe(23, 8, 1);
+    pair<long long, long long> p = sfe(7, 1, 4);
 
     cout<<p.first<<" "<<p.second<<endl;
 
