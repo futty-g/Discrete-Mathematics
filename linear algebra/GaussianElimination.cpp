@@ -35,12 +35,12 @@ mat gauss(mat A){
         }
     }
 
-    while(r < n-1 && r < m - 1){
+    while(r < n && r < m){
         double z_pq = Z[r][r];
         int p = r, q = r;
         for(int i=r; i<m; ++i){
             for(int j=r; j<n; ++j){
-                if(z_pq < Z[i][j]){
+                if(abs(z_pq) < abs(Z[i][j])){
                     z_pq = Z[i][j];
                     p = i;
                     q = j;
