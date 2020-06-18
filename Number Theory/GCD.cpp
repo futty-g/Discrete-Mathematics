@@ -4,6 +4,11 @@
 
 using namespace std;
 
+/*
+    GCD(ユークリッドの互除法)，
+    連分数展開
+*/
+
 long long gcd(long long p, long long q){
     if(p < q){
         return gcd(q, p);

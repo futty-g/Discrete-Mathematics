@@ -3,6 +3,12 @@
 
 using namespace std;
 
+/*
+    素数列挙(エラトステネスの篩)，
+    素因数分解，
+    Eulerの\phi関数
+*/
+
 int prime[20000] = {0};
 int e[20000];
 int pn;
