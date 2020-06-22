@@ -9,7 +9,15 @@ using namespace std;
 namespace ublas = boost::numeric::ublas;
 
 long long size(long long n){
-    return 1+(long long)ceil(log2(abs(n) + 1));
+    long long m = 1 + (n >= 0 ? n : -n);
+    long long s = 0;
+    long long cnt = 0;
+    while(m > 1){
+        s |= (m % 2);
+        m /= 2;
+        cnt++;
+    } 
+    return 1+cnt+s;
 }
 
 long long size(boost::rational<long long> r){

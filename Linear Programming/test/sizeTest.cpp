@@ -21,8 +21,7 @@ int main(){
     assert(size(-1) == 2);
     assert(size(-2) == 3);
     assert(size(-100) == 8);
-    cout<<size(-9)<<endl;
-    cout<<size(10000)<<endl;
+    
 
     return 0;
 }
