@@ -10,8 +10,9 @@ namespace ublas = boost::numeric::ublas;
 
 long long size(long long);
 long long size(boost::rational<long long>);
-long long size(ublas::vector<long long>);
-long long size(ublas::matrix<long long>);
+//long long size(ublas::vector<long long>);
+long long size(ublas::vector<boost::rational<long long>>);
+long long size(ublas::matrix<boost::rational<long long>>);
 
 
 #endif
