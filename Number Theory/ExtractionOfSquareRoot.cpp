@@ -1,6 +1,7 @@
 #include<iostream>
 
 #define NMAX 1000
+#define D 300
 using namespace std;
 
 /*
@@ -92,7 +93,7 @@ int calc(int n){
     a[0] = n % 10;
     a[1] = n / 10;
 
-    for(int i=0; i<100; ++i){
+    for(int i=0; i<D; ++i){
         int m = find(b, a);
         append(b, 2*m);
         append(c, m);
@@ -102,8 +103,8 @@ int calc(int n){
         }
     }
 
-    for(int i=0; i<100; ++i){
-        cout<<c[100 - i - 1];
+    for(int i=0; i<D; ++i){
+        cout<<c[D - i - 1];
         if(i == k/2){
             cout<<'.';
         }
