@@ -3,6 +3,11 @@
 #define NMAX 1000
 using namespace std;
 
+/*
+    開平計算
+*/
+
+
 int a[NMAX] = {0}, b[NMAX] = {0}, c[NMAX] = {0};
 int d[NMAX] = {0}, e[NMAX] = {0}, f[NMAX] = {0};
 
