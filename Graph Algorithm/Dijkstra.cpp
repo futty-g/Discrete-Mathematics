@@ -6,58 +6,103 @@
 #define NMAX 100
 
 using namespace std;
+
+typedef long long nat;
 typedef pair<int, int> pii;
+typedef pair<nat, int> pni;
+typedef pair<nat, pair<int, int> > pnii;
+
+class Dijkstra{
+    // 正の重みをもつグラフの最短路を求めるアルゴリズム
+    public:
+        vector<vector<pni>> edge; // 辺集合
+        vector<nat> l; // ポテンシャル
+        vector<int> p; // 最短路における parent
+        int n; // 頂点数
+
+        Dijkstra(){}
+        Dijkstra(int size){
+            l.resize(size);
+            p.resize(size);
+            edge.resize(size);
+            for(int i=0; i<size; ++i){
+                edge[i].resize(0);
+                l[i] = -1;
+                p[i] = -1;
+            }
+            n = size;
+        }
+
+        void add_dir_edge(int s, int t, nat c){
+            edge[s].push_back(pni (c, t));
+        }
+
+        void add_edge(int s, int t, nat c){
+            add_dir_edge(s, t, c);
+            add_dir_edge(t, s, c);
+        }
+
+        // 頂点 s から t への最短路を求める．
+        nat solve(int s, int t){
+            l[s] = 0;
+            queue<pnii> q;
+            int u, v;
+            nat c;
+            for(auto itr=edge[s].begin(); itr != edge[s].end(); ++itr){
+                c = itr->first;
+                u = itr->second;
+                if(l[u] == -1 || l[u] > l[s]+c){
+                    l[u] = l[s] + c;
+                    p[u] = s;
+                    q.push(pnii (c, pii (u, s)));
+                }
+            }
+            while(!q.empty()){
+                c = q.front().first;
+                u = q.front().second.first;
+                v = q.front().second.second;
+                q.pop();
+
+                for(auto itr=edge[u].begin(); itr != edge[u].end(); ++itr){
+                    c = itr->first;
+                    v = itr->second;
+                    if(l[v] == -1 || l[v] > l[u]+c){
+                        l[v] = l[u] + c;
+                        p[v] = u;
+                        q.push(pnii (c, pii (v, u)));
+                    }
+                }                
+            }
+
+            return l[t];
+        }
+};
 
 int main(){
 
-    /*
-        Dijlstra法
-        頂点集合V = {0, ..., n-1}, 辺集合E = edge[NMAX]からなる
-        有向グラフG = (V, E)において
-        頂点0からの最短経路を求める
-    */
-    vector<pii> edge[NMAX]; 
-    priority_queue<pii, vector<pii>, greater<pii> > q;
-    int c[NMAX] = {0}, d[NMAX];
+    int n, m, r;
+    int s, t, d;
 
-    edge[0].push_back(pii(10, 1));
-    edge[0].push_back(pii(5, 2));
-    edge[1].push_back(pii(1, 3));
-    edge[1].push_back(pii(2, 2));
-    edge[2].push_back(pii(3, 1));
-    edge[2].push_back(pii(9, 3));
-    edge[2].push_back(pii(2, 4));
-    edge[3].push_back(pii(4, 4));
-    edge[4].push_back(pii(7, 0));
-    edge[4].push_back(pii(6, 3));
+    cin>>n>>m>>r;
 
-    q.push(pii(0, 0));
-    pii p, r;
-    while(!q.empty()){
-        p = q.top();
-        q.pop();
+    Dijkstra dj = Dijkstra(n);
 
-        if(c[p.second] == 1){
-            continue;
-        }
-
-        for(auto itr = edge[p.second].begin(); itr != edge[p.second].end(); ++itr){
-            if(c[itr->second] == 0){
-                r.first = itr->first + p.first;
-                r.second = itr->second;
-                q.push(r);
-                //cout<<p.second<<" "<<r.first<<" "<<r.second<<endl;
-            }
-        }
-
-        d[p.second] = p.first;
-        c[p.second] = 1;
+    for(int i=0; i<m; ++i){
+        cin>>s>>t>>d;
+        dj.add_dir_edge(s, t, d);
     }
 
-    for(int i=0; i<5; ++i){
-        cout<<d[i]<<" ";
+    dj.solve(r, n-1);
+
+
+    for(int i=0; i<n; ++i){
+        if(dj.l[i] != -1){
+            cout<<dj.l[i]<<endl;
+        }
+        else{
+            cout<<"INF"<<endl;
+        }
     }
-    cout<<endl;
 
     return 0;
 }
