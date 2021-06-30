@@ -14,6 +14,10 @@ class Graph{
 
         Graph(int n){
             this->edges.resize(n);
+            this->alt_edges.resize(n);
+            this->basis.resize(n);
+            this->matching.resize(n);
+            this->scanned.resize(n);
             this->reset_alt_edges(n);
             this->reset_basis(n);
             this->reset_matching(n);
@@ -54,22 +58,23 @@ class Graph{
                     if(f3){
                         //if(show) std::cout<<"grow: "<<y<<std::endl;
                         this->grow(v, y);
+                        bool f = true;
                     }
                     else if(f1 && f2){
                         if(get_pv(v, 0) != get_pv(y, 1)){
-                            //if(show) std::cout<<"augument: "<<y<<std::endl;
-                            this->augument(v, y);
+                            //if(show) std::cout<<"augment: "<<y<<std::endl;
+                            this->augment(v, y);
                             v = -1;
                             break;
                         }
                         else{
                             //if(show) std::cout<<"shrink: "<<y<<std::endl;
                             int r = this->get_first_base();
-                            this->shrink(v, y, r);                    
+                            this->shrink(v, y, r);
                         }
                     }
-                }
                 if(v > -1)this->scanned[v] = true;
+                }
             }
 
             return this->countMatching();
@@ -93,7 +98,7 @@ class Graph{
             return -1;
         }
 
-        void augument(int x, int y){
+        void augment(int x, int y){
             // 交互パスに沿って増加操作を行う
             int v, w;
             for(int num=0; num<2; num++){
@@ -201,28 +206,28 @@ class Graph{
         }
 
         void reset_alt_edges(int n){
-            this->alt_edges.resize(n);
+            //this->alt_edges.resize(n);
             for(int i=0; i<n; i++){
                 this->alt_edges[i] = i;
             }
         }
 
         void reset_basis(int n){
-            this->basis.resize(n);
+            //this->basis.resize(n);
             for(int i=0; i<n; i++){
                 this->basis[i] = i;
             }
         }
         
         void reset_matching(int n){
-            this->matching.resize(n);
+            //this->matching.resize(n);
             for(int i=0; i<n; i++){
                 this->matching[i] = i;
             }
         }
         
         void reset_scanned(int n){
-            this->scanned.resize(n);
+            //this->scanned.resize(n);
             for(int i=0; i<n; i++){
                 this->scanned[i] = false;
             }
@@ -231,13 +236,18 @@ class Graph{
         void shrink(int x, int y, int r){
             // 偶花 x->r, y->r, x->y を基 r に縮約
             int v, w;
+            std::vector<bool> flag(this->vsize, false);
             for(int num=0; num<2; num++){
                 std::vector<int> pv = this->path[num];
-                for(int i=0; pv[i]!=r; i++){
+                for(int i=0;; i++){
                     v = pv[i];
                     w = this->alt_edges[v];
                     if((i & 1) && (this->basis[w] != r)){
                         this->alt_edges[w] = v;
+                    }
+                    flag[v] = true;
+                    if(v == r){
+                        break;
                     }
                 }
             }
@@ -247,6 +257,7 @@ class Graph{
             if(this->basis[y] != r){
                 this->alt_edges[y] = x;
             }
+            /*
             std::vector<bool> flag(this->vsize, false);
             for(int num=0; num<2; num++){
                 std::vector<int> pv = this->path[num];
@@ -258,6 +269,7 @@ class Graph{
                     }
                 }
             }
+            */
             for(int i=0; i<this->vsize; i++){
                 if(flag[this->basis[i]]){
                     this->basis[i] = r;
@@ -279,16 +291,16 @@ void query(bool show){
     }
 
     g.show = show;
-    //g.Edmonds();
-    std::cout<<g.Edmonds()<<std::endl;;
+    g.Edmonds();
+    //std::cout<<g.Edmonds()<<std::endl;;
     for(int i=0; i<n; i++){
         int m = i == g.matching[i] ? -1 : g.matching[i];
-        //std::cout<<m<<" ";
-        if(i < g.matching[i]){
-            std::cout<<i<<" "<<g.matching[i]<<std::endl;
-        }
+        std::cout<<m<<" ";
+        //if(i < g.matching[i]){
+        //    std::cout<<i<<" "<<g.matching[i]<<std::endl;
+        //}
     }
-    //std::cout<<std::endl;
+    std::cout<<std::endl;
 
     //return 0;
 }
@@ -300,7 +312,7 @@ signed main(){
 
     int t;
     t = 1;
-    //std::cin>>t;
+    std::cin>>t;
     //bool f = true;
     bool f = false;
     while(t){
