@@ -1,5 +1,7 @@
 #include<iostream>
+#include<algorithm>
 #include<vector>
+#include<utility>
 
 //using namespace std;
 
@@ -31,18 +33,43 @@ class Graph{
             this->edges[v].push_back(u);
         }
 
-        int Edmonds(){
+        int Edmonds(bool greedy = false){
             // 初期化
             int vsize = this->vsize;
-            //this->reset_alt_edges(vsize);
-            //this->reset_basis(vsize);
-            //this->reset_matching(vsize);
-            //this->reset_scanned(vsize);
+            this->reset_alt_edges(vsize);
+            this->reset_basis(vsize);
+            this->reset_matching(vsize);
+            this->reset_scanned(vsize);
             bool show = this->show;
-            
+
+
+            std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> e; 
+            for(int u=0; u<vsize; u++){
+                for(auto itr=this->edges[u].begin(); itr != this->edges[u].end(); itr++){
+                    int t = *itr;
+                    int du = this->edges[u].size();
+                    int dt = this->edges[t].size();
+                    int d = du < dt ? du : dt;
+                    int D = du >= dt ? du : dt;
+                    e.push_back({{d, D}, {u, t}});
+                }
+            }
+            std::sort(e.begin(), e.end());
+            for(auto itr = e.begin(); itr != e.end(); itr++){
+                //std::cout<<itr->first.first<<' '<<itr->first.second<<' '<<itr->second.first<<' '<<itr->second.second<<std::endl;
+                int u = itr->second.first, t = itr->second.second;
+                if(this->matching[u] == u && this->matching[t] == t){
+                    this->matching[u] = t;
+                    this->matching[t] = u;
+                }
+            }
+
+
             int v, y;
             bool f1, f2, f3;
             while((v = this->allScanned()) != -1){
+            //while(!v_outer.empty()){
+                //v = v_outer.front();
                 //if(show) std::cout<<"outer: "<<v<<std::endl;
                 for(auto itr=this->edges[v].begin(); itr!=this->edges[v].end(); itr++){
                     /*
@@ -73,7 +100,9 @@ class Graph{
                             this->shrink(v, y, r);
                         }
                     }
-                if(v > -1)this->scanned[v] = true;
+                }
+                if(v > -1){
+                    this->scanned[v] = true;
                 }
             }
 
@@ -91,6 +120,7 @@ class Graph{
 
         int allScanned(){
             for(int i=0; i<this->vsize; i++){
+            //for(int i=this->vsize-1; i>=0; i--){
                 if(!this->scanned[i] && this->isOuter(i)){
                     return i;
                 }
@@ -291,16 +321,16 @@ void query(bool show){
     }
 
     g.show = show;
-    g.Edmonds();
-    //std::cout<<g.Edmonds()<<std::endl;;
+    //g.Edmonds();
+    std::cout<<g.Edmonds(true)<<std::endl;;
     for(int i=0; i<n; i++){
-        int m = i == g.matching[i] ? -1 : g.matching[i];
-        std::cout<<m<<" ";
-        //if(i < g.matching[i]){
-        //    std::cout<<i<<" "<<g.matching[i]<<std::endl;
-        //}
+        //int m = i == g.matching[i] ? -1 : g.matching[i];
+        //std::cout<<m<<" ";
+        if(i < g.matching[i]){
+            std::cout<<i<<" "<<g.matching[i]<<std::endl;
+        }
     }
-    std::cout<<std::endl;
+    //std::cout<<std::endl;
 
     //return 0;
 }
@@ -312,7 +342,7 @@ signed main(){
 
     int t;
     t = 1;
-    std::cin>>t;
+    //std::cin>>t;
     //bool f = true;
     bool f = false;
     while(t){
